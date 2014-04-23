@@ -11,7 +11,7 @@ class ImageRetriever:
     def __init__(self, redis_config):
         self.r = redis.Redis(**redis_config)
 
-    def get_file(key):
+    def get_file(self, key):
         return self.r.get(key)
 
 class Resizer:
