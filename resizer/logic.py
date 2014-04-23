@@ -1,5 +1,6 @@
 import os
 import uuid
+import io
 
 import redis
 import requests
@@ -8,21 +9,30 @@ import resize
 
 
 class Resizer:
-    def __init__(self, redis_config, image_dir):
+    def __init__(self, redis_config, image_dir, key_expire=None):
         self.r = redis.Redis(**redis_config)
         self.get = requests.get
+        self.key_expire = key_expire
         self.image_dir = image_dir
 
     def process(self, kwargs):
-        print kwargs
-        return {'status': 'ok'}, 200
+        src = self.get_image(kwargs['src'])
+        w = int(kwargs['w'])
+        h = int(kwargs['h'])
+        thumb = self.resize_image(src, w, h)
+        base_name = os.path.basename(thumb)
+        if self.to_redis(base_name, thumb):
+            return {'filename': base_name}
+
+    def to_redis(self, name, thumb):
+        if self.r.setex(name, self.read_to_bytes(thumb), ):
+            return self.remove_file(thumb)
+        return False
 
     def get_image(self, src):
         request = self.get(src)
         if request.ok:
-            for c in request.iter_content:
-                print c
-                print '*****~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*****'
+            return io.BytesIO(request.content)
 
     def resize_image(self, src, w, h):
         out = '{}/{}.jpg'.format(self.image_dir, str(uuid.uuid4()))
