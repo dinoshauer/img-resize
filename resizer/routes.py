@@ -1,6 +1,6 @@
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, current_app, jsonify, request, Response
 
-from logic import Resizer
+from logic import ImageRetriever, Resizer
 import responses
 
 
@@ -25,6 +25,15 @@ def get():
 
 @resizer.route('/<file_name>')
 def get_file(file_name):
-    r = Resizer(current_app.config['REDIS'], current_app.config['IMAGE_DIR'])
+    r = ImageRetriever(current_app.config['REDIS'])
     result = r.get_file(file_name)
-    return responses.success(result)
+    if result:
+        return Response(
+            result,
+            mimetype='image/jpeg',
+            headers={
+                'Content-Description': 'File Transfer',
+                'Content-Disposition': 'attachment; filename={}'.format(file_name)
+            }
+        )
+    return responses.not_found()
