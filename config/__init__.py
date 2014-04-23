@@ -7,7 +7,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
 
 def load_config(app, flags):
-    if ['dev', 'debug'] in flags:
+    if 'dev' in flags:
         app.config.from_object('config.DevelopmentConfig')
     else:
         app.config.from_object('config.Config')
