@@ -1,5 +1,8 @@
 from flask import Blueprint, current_app, jsonify, request
 
+import responses
+
+
 resizer = Blueprint(
     'resizer',
     __name__,
@@ -10,5 +13,5 @@ resizer = Blueprint(
 def get():
     try:
         request.args
-    except KeyError:
-        return
+    except KeyError, e:
+        return responses.bad_argument(e.message, e.message)
