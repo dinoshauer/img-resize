@@ -28,7 +28,7 @@ def created(data):
 def not_found():
     return jsonify(
         {
-            'status': 'error':
+            'status': 'error',
             'error': 'not found'
         }
     ), 404
