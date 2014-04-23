@@ -7,6 +7,7 @@ class Config:
         'db': 0,
         'password': None
     }
+    IMAGE_DIR = 'resources/'
 
 class DevelopmentConfig(Config):
     DEBUG = True
