@@ -1,13 +1,10 @@
 from PIL import Image
 
 def resize(src, out, w, h, quality=70):
-    try:
-        image = Image.open(src)
-        image.thumbnail((w, h), Image.ANTIALIAS)
-        image.convert('RGB').save(out, "JPEG", quality=quality)
-    except IOError, e:
-        print 'IOError'
-        print e
+    image = Image.open(src)
+    image.thumbnail((w, h), Image.ANTIALIAS)
+    image.convert('RGB').save(out, "JPEG", quality=quality)
+    return True
 
 def main():
     import sys
