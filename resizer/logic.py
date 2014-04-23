@@ -7,6 +7,12 @@ import requests
 
 import resize
 
+class ImageRetriever:
+    def __init__(self, redis_config):
+        self.r = redis.Redis(**redis_config)
+
+    def get_file(key):
+        return self.r.get(key)
 
 class Resizer:
     def __init__(self, redis_config, image_dir, key_expire=None):
