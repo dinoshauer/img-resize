@@ -16,7 +16,7 @@ class Resizer:
         self.image_dir = image_dir
 
     def process(self, kwargs):
-        src = self.get_image(kwargs['src'])
+        src = self.download_image(kwargs['src'])
         w = int(kwargs['w'])
         h = int(kwargs['h'])
         thumb = self.resize_image(src, w, h)
@@ -29,7 +29,7 @@ class Resizer:
             return self.remove_file(thumb)
         return False
 
-    def get_image(self, src):
+    def download_image(self, src):
         request = self.get(src)
         if request.ok:
             return io.BytesIO(request.content)
