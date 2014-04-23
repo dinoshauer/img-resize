@@ -31,7 +31,7 @@ class Resizer:
             return {'filename': base_name}
 
     def to_redis(self, name, thumb):
-        if self.r.setex(name, self.read_to_bytes(thumb), ):
+        if self.r.setex(name, self.read_to_bytes(thumb), self.key_expire):
             return self.remove_file(thumb)
         return False
 
