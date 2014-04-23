@@ -24,3 +24,11 @@ def created(data):
             'data': data
         }
     ), 201
+
+def not_found():
+    return jsonify(
+        {
+            'status': 'error':
+            'error': 'not found'
+        }
+    ), 404
