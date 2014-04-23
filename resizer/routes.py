@@ -23,17 +23,13 @@ def get():
     except KeyError, e:
         return responses.bad_argument(e.message)
 
-@resizer.route('/<file_name>')
+@resizer.route('/img/<file_name>')
 def get_file(file_name):
     r = ImageRetriever(current_app.config['REDIS'])
     result = r.get_file(file_name)
     if result:
         return Response(
             result,
-            mimetype='image/jpeg',
-            headers={
-                'Content-Description': 'File Transfer',
-                'Content-Disposition': 'attachment; filename={}'.format(file_name)
-            }
+            mimetype='image/jpeg'
         )
     return responses.not_found()
