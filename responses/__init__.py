@@ -1,10 +1,10 @@
 from flask import jsonify
 
-def bad_argument(msg, arg):
+def bad_argument(arg):
     return jsonify(
         {
             'status': 'error',
-            'error': msg,
+            'error': 'missing argument: {}'.format(arg),
             'key': arg
         }
     ), 400

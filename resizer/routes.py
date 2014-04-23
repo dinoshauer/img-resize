@@ -17,4 +17,4 @@ def get():
         result = r.process(request.args)
         return jsonify(result[0]), result[1]
     except KeyError, e:
-        return responses.bad_argument(e.message, e.message)
+        return responses.bad_argument(e.message)
