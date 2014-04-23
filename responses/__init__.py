@@ -3,6 +3,7 @@ from flask import jsonify
 def bad_argument(msg, arg):
     return jsonify(
         {
+            'status': 'error',
             'error': msg,
             'key': arg
         }
