@@ -7,7 +7,8 @@ class Config:
         'db': 0,
         'password': None
     }
-    IMAGE_DIR = 'resources/'
+    REDIS_KEY_EXPIRE = 604800  # a week in seconds
+    IMAGE_DIR = './resources'
 
 class DevelopmentConfig(Config):
     DEBUG = True
