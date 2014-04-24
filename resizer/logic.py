@@ -51,7 +51,7 @@ class Resizer:
 
     def process(self, kwargs, file_name=None):
         src = self.download_image(kwargs['src'])
-        if self._check_file_type(src):
+        if src:
             w = int(kwargs['w'])
             h = int(kwargs['h'])
             thumb = self.resize_image(src, w, h, file_name)
@@ -68,7 +68,10 @@ class Resizer:
     def download_image(self, src):
         request = self.get(src)
         if request.ok:
-            return io.BytesIO(request.content)
+            c = request.content
+            if self._check_file_type(c):
+                return io.BytesIO(c)
+        return False
 
     def resize_image(self, src, w, h, file_name=None):
         if file_name:
