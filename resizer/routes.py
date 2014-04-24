@@ -31,11 +31,13 @@ def pass_through():
             current_app.config['IMAGE_DIR'],
             current_app.config['REDIS_KEY_EXPIRE']
         )
-        result = r.process_direct(request.args)
-        return Response(
-            result,
-            mimetype='image/jpeg'
-        )
+        result = r.process_and_return(request.args)
+        if result:
+            return Response(
+                result,
+                mimetype='image/jpeg'
+            )
+        return responses.not_found()
     except KeyError, e:
         return responses.bad_argument(e.message)
 

@@ -21,15 +21,26 @@ class Resizer:
         self.key_expire = key_expire
         self.image_dir = image_dir
 
-    def _check_redis_for_file(self, file_name):
-        return self.r.get(filename)
+    def _parse_url(self, url):
+        file_name, file_ext = os.path.splitext(
+            os.path.basename(
+                urlparse(url).path
+            )
+        )
+        return '{}{}'.format(file_name, file_ext)
 
-    def pass_through(self, kwargs):
-        file_name = self._parse_url(kwargs['url'])
-        file_exists = self._check_redis_for_file(file_name)
+    def _check_file_type(self, blob):
+        result = magic.from_buffer(blob)
+        return 'bitmap' in result or 'image' in result
+
+    def process_and_return(self, kwargs):
+        file_name = self._parse_url(kwargs['src'])
+        image = ImageRetriever(self.redis_config)
+        file_exists = image.get_file(file_name)
         if file_exists:
             return file_exists
-
+        result = self.process(kwargs, file_name=file_name)
+        return image.get_file(result['file_name'])
 
     def process(self, kwargs, file_name=None):
         src = self.download_image(kwargs['src'])
