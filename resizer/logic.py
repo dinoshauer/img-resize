@@ -33,8 +33,10 @@ class Resizer:
         return '{}{}'.format(file_name, file_ext)
 
     def _check_file_type(self, blob):
-        result = magic.from_buffer(blob)
-        return 'bitmap' in result or 'image' in result
+        if blob:
+            result = magic.from_buffer(blob)
+            return 'bitmap' in result or 'image' in result
+        return False
 
     def process_and_return(self, kwargs):
         file_name = self._parse_url(kwargs['src'])
