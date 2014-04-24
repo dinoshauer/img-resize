@@ -2,28 +2,11 @@ from logging import Formatter
 from logging.handlers import RotatingFileHandler
 import logging
 
-class Config:
-    DEBUG = False
-    TESTING = False
-    REDIS = {
-        'host': 'localhost',
-        'port': 6379,
-        'db': 0,
-        'password': None
-    }
-    REDIS_KEY_EXPIRE = 604800  # a week in seconds
-    IMAGE_DIR = './resources'
-    LOG_FILE = 'app.log'
-
-class DevelopmentConfig(Config):
-    DEBUG = True
-
-
 def load_config(app, flags):
     if 'dev' in flags:
-        app.config.from_object('config.DevelopmentConfig')
+        app.config.from_object('config.config.DevelopmentConfig')
     else:
-        app.config.from_object('config.Config')
+        app.config.from_object('config.config.Config')
 
 def rotating_handler(filename):
     if filename.startswith('~'):
