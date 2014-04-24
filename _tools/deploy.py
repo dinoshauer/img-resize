@@ -16,15 +16,6 @@ def build_virtual_env():
     with cd(WEB_ROOT), prefix('. env/bin/activate'):
         run('pip install -q -r requirements.txt')
 
-def deploy_nginx_config():
-    put(local_path='_conf/img-resizer.nginx',
-        remote_path=NGINX_CONF_DIR,
-        use_sudo=True)
-
-def update_nginx_symlink():
-    with cd('/etc/nginx/sites-enabled'):
-        sudo('ln -s --force ../sites-available/img-resizer.nginx img-resizer.nginx')
-
 def reload_nginx_config():
     sudo('service nginx reload')
 
@@ -43,8 +34,6 @@ def restart_uwsgi():
 def build_and_deploy():
     deploy_api()
     build_virtual_env()
-    deploy_nginx_config()
-    update_nginx_symlink()
     reload_nginx_config()
     deploy_uwsgi_config()
     update_uwsgi_symlink()
