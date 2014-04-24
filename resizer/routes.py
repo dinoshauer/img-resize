@@ -19,7 +19,12 @@ def get():
             current_app.config['REDIS_KEY_EXPIRE']
         )
         result = r.process(request.args)
-        return responses.created(result)
+        if result:
+            return Response(
+                result,
+                mimetype='image/jpeg'
+            )
+        return responses.not_found()
     except KeyError, e:
         return responses.bad_argument(e.message)
 
