@@ -21,14 +21,21 @@ class Resizer:
         self.key_expire = key_expire
         self.image_dir = image_dir
 
-    def pass_through(self, kwargs):
-        pass
+    def _check_redis_for_file(self, file_name):
+        return self.r.get(filename)
 
-    def process(self, kwargs):
+    def pass_through(self, kwargs):
+        file_name = self._parse_url(kwargs['url'])
+        file_exists = self._check_redis_for_file(file_name)
+        if file_exists:
+            return file_exists
+
+
+    def process(self, kwargs, file_name=None):
         src = self.download_image(kwargs['src'])
         w = int(kwargs['w'])
         h = int(kwargs['h'])
-        thumb = self.resize_image(src, w, h)
+        thumb = self.resize_image(src, w, h, file_name)
         base_name = os.path.basename(thumb)
         if self.to_redis(base_name, thumb):
             return {'filename': base_name}
@@ -43,8 +50,11 @@ class Resizer:
         if request.ok:
             return io.BytesIO(request.content)
 
-    def resize_image(self, src, w, h):
-        out = '{}/{}.jpg'.format(self.image_dir, str(uuid.uuid4()))
+    def resize_image(self, src, w, h, file_name=None):
+        if file_name:
+            out = '{}/{}.jpg'.format(self.image_dir, file_name)
+        else:
+            out = '{}/{}.jpg'.format(self.image_dir, str(uuid.uuid4()))
         result = resize.resize(src, out, w, h)
         if result:
             return out
