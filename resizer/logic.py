@@ -21,6 +21,9 @@ class Resizer:
         self.key_expire = key_expire
         self.image_dir = image_dir
 
+    def pass_through(self, kwargs):
+        pass
+
     def process(self, kwargs):
         src = self.download_image(kwargs['src'])
         w = int(kwargs['w'])
