@@ -35,10 +35,10 @@ def deploy_uwsgi_config():
 
 def update_uwsgi_symlink():
     with cd('/etc/uwsgi/apps-enabled'):
-        sudo('ln -s --force ../apps-available/img-resizer.ini img-resizer.ini')
+        sudo('ln -s --force ../apps-available/img-resizer.uwsgi.ini img-resizer.uwsgi.ini')
 
 def restart_uwsgi():
-    sudo('touch /etc/uwsgi/apps-enabled/img-resizer.ini')
+    sudo('touch /etc/uwsgi/apps-enabled/img-resizer.uwsgi.ini')
 
 def build_and_deploy():
     deploy_api()
