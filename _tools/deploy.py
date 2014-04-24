@@ -20,7 +20,7 @@ def reload_nginx_config():
     sudo('service nginx reload')
 
 def deploy_uwsgi_config():
-    put(local_path='_conf/img-resizer.ini',
+    put(local_path='_conf/img-resizer.uwsgi.ini',
         remote_path=UWSGI_CONFIG_DIR,
         use_sudo=True)
 
