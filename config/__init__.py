@@ -1,3 +1,7 @@
+from logging import Formatter
+from logging.handlers import RotatingFileHandler
+import logging
+
 class Config:
     DEBUG = False
     TESTING = False
@@ -31,9 +35,6 @@ def rotating_handler(filename):
 
 def setup_logging(app):
     if not app.debug:
-        from logging import Formatter
-        from logging.handlers import RotatingFileHandler
-        import logging
         filename = app.config['LOG_FILE']
         handler = rotating_handler(filename)
         handler.setLevel(logging.INFO)
