@@ -2,11 +2,13 @@ import sys
 
 from flask import Flask
 
-from config import load_config
+import config
 from resizer.routes import resizer
 
 app = Flask(__name__)
-load_config(app, sys.argv)
+
+config.load_config(app, sys.argv)
+config.setup_logging(app)
 app.register_blueprint(resizer)
 
 if __name__ == '__main__':
