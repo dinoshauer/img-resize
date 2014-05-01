@@ -39,7 +39,10 @@ class Resizer:
         return False
 
     def process_and_return(self, kwargs):
-        file_name = self._parse_url(kwargs['src'])
+        file_name = '{file_name}_{w[0]}_{h[0]}'.format(
+            file_name=self._parse_url(kwargs['src']),
+            **kwargs
+        )
         image = ImageRetriever(self.redis_config)
         file_exists = image.get_file(file_name)
         if file_exists:
