@@ -6,21 +6,41 @@ def resize(src, out, w, h, quality=70):
     image.convert('RGB').save(out, "JPEG", quality=quality)
     return True
 
+def _width_or_height(width, height):
+    if width:
+        return 'width'
+    return 'height'
+
+def resize_with_specific_ratio(src, out, width=None, height=None, quality=70):
+    which = _width_or_height(width, height)
+    image = Image.open('resources/foo.jpg')
+    old_width, old_height = image.size
+    if which is 'height':
+        new_height = height
+        new_width = int((float(new_height) / old_height) * old_width)
+    else:
+        new_width = width
+        new_height = int((float(new_width) / old_width) * old_height)
+    image = image.resize((new_width, new_height), Image.ANTIALIAS)
+    image.convert('RGB').save(out, "JPEG", quality=quality)
+    return True
+
 def main():
     import sys
+    import argparse
 
-    try:
-        src = sys.argv[1]
-        out = sys.argv[2]
-        w = int(sys.argv[3])
-        h = int(sys.argv[4])
-        resize(src, out, w, h)
-        sys.exit(0)
-    except IndexError:
-        print 'Missing argument, please use the resizer like this:'
-        print 'python {} source_image output_image width height'.format(__file__)
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description='Resizes images, maintaining aspect ratio')
+    parser.add_argument('--width', type=int, help='Desired width of the image')
+    parser.add_argument('--height', type=int, help='Desired height of the image')
+    parser.add_argument('-i', '--input', required=True, help='Path to image')
+    parser.add_argument('-o', '--output', required=True, help='Path to output image')
+    args = parser.parse_args()
 
+    if args.width and args.height:
+        resize(args.input, args.output, args.width, args.height)
+    else:
+        resize_with_specific_ratio(args.input, args.output, width=args.width, height=args.height)
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()
