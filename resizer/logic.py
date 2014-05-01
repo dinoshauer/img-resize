@@ -38,6 +38,13 @@ class Resizer:
             return 'bitmap' in result or 'image' in result
         return False
 
+    def _build_url(self, kwargs):
+        url = kwargs['src']
+        for k, v in kwargs.items():
+            if k not in ['src', 'w', 'h']:
+                url += '&{k}={v}'.format(k=k, v=v)
+        return url
+
     def process_and_return(self, kwargs):
         file_name = '{file_name}_{w[0]}_{h[0]}'.format(
             file_name=self._parse_url(kwargs['src']),
@@ -53,7 +60,8 @@ class Resizer:
         return False
 
     def process(self, kwargs, file_name=None):
-        src = self.download_image(kwargs['src'])
+        print kwargs
+        src = self.download_image(self._build_url(kwargs))
         if src:
             w = int(kwargs['w'])
             h = int(kwargs['h'])
