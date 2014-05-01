@@ -13,7 +13,7 @@ def _width_or_height(width, height):
 
 def resize_with_specific_ratio(src, out, width=None, height=None, quality=70):
     which = _width_or_height(width, height)
-    image = Image.open('resources/foo.jpg')
+    image = Image.open(src)
     old_width, old_height = image.size
     if which is 'height':
         new_height = height

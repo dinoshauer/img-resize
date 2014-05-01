@@ -78,7 +78,10 @@ class Resizer:
             out = '{}/{}'.format(self.image_dir, file_name)
         else:
             out = '{}/{}.jpg'.format(self.image_dir, str(uuid.uuid4()))
-        result = resize.resize(src, out, w, h)
+        if h is 0 or w is 0:
+            result = resize.resize_with_specific_ratio(src, out, width=w, height=h)
+        else:
+            result = resize.resize(src, out, w, h)
         if result:
             return out
 
