@@ -4,6 +4,7 @@ from flask import Flask
 
 import config
 from resizer.routes import resizer
+from utils.routes import utils
 
 parser = argparse.ArgumentParser(description='Runs the image resizer')
 parser.add_argument('--debug', dest="mode", action="store_true", required=False, default=False, help='Run image resizer in debug mode.')
@@ -17,6 +18,7 @@ app = Flask(__name__)
 config.load_config(app, args.mode)
 config.setup_logging(app)
 app.register_blueprint(resizer)
+app.register_blueprint(utils)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=args.port)
