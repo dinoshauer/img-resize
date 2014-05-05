@@ -59,7 +59,7 @@ class Resizer:
         return url
 
     def process_and_return(self, kwargs):
-        file_name = '{file_name}_{w[0]}_{h[0]}'.format(
+        file_name = '{file_name}_{w}_{h}'.format(
             file_name=self._parse_url(self._get(kwargs, 'file', 'src')),
             w=self._get(kwargs, 'width', 'w'),
             h=self._get(kwargs, 'height', 'h')
