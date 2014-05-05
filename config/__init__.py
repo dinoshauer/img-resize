@@ -3,12 +3,13 @@ from logging import Formatter
 from logging.handlers import RotatingFileHandler
 import logging
 
-def load_config(app, flags):
-    if 'dev' in flags:
+def load_config(app, debug):
+    if debug:
         app.config.from_object('config.config.DevelopmentConfig')
     else:
         app.config.from_object('config.config.Config')
         app.config['STATSD']['host'] = os.environ.get('IMG_RESIZER_STATSD_HOST')
+        app.config['STATSD']['port'] = os.environ.get('IMG_RESIZER_STATSD_PORT')
 
 def rotating_handler(filename):
     if filename.startswith('~'):
