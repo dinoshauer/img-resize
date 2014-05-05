@@ -19,12 +19,21 @@ def re_link_nginx_config():
     with cd(NGINX_CONF_DIR):
         sudo('ln -s --force {}_conf/img-resizer.nginx'.format(WEB_ROOT))
 
-def reload_nginx_config():
+def _reload_nginx_config():
     sudo('service nginx reload')
+
+def _update_server_status_in_nginx(i, down=True):
+    if down:
+        sudo('sed --follow-symlinks --in-place "s/$1:800{0};/$1:800{0} down;/" {1}*'.format(i, NGINX_CONF_DIR))
+    else:
+        sudo('sed --follow-symlinks --in-place "s/$1:800{0} down;/$1:800{0};/" {1}*'.format(i, NGINX_CONF_DIR))
+    _reload_nginx_config()
 
 def restart_supervisor_processes():
     for i in xrange(4):
+        _update_server_status_in_nginx(i)
         sudo('supervisorctl restart img-resizer:img-resizer-{}'.format(i))
+        _update_server_status_in_nginx(i, down=False)
 
 def restart_uwsgi():
     sudo('touch /etc/uwsgi/apps-enabled/img-resizer.uwsgi.ini')
@@ -33,5 +42,4 @@ def build_and_deploy():
     deploy_api()
     build_virtual_env()
     re_link_nginx_config()
-    reload_nginx_config()
     restart_supervisor_processes()
