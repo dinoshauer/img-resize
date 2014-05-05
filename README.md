@@ -31,6 +31,12 @@ of seconds.
 It's quite simple really.
 (URL's are from running locally in dev mode)
 
+Possible arguments:
+
+* Input file: `src` or `file`
+* Value for width: `w` or `width`
+* Value for height: `h` or `height`
+
 Resize an image to desired size:
 
 	GET
