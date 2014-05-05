@@ -13,7 +13,7 @@ def deploy_api():
 
 def build_virtual_env():
     with cd(WEB_ROOT), prefix('. /home/ubuntu/.virtualenvs/img-resizer/bin/activate'):
-        run('pip install -I -r requirements.txt')
+        run('pip install -r requirements.txt')
 
 def re_link_nginx_config():
     with cd(NGINX_CONF_DIR):
