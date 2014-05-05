@@ -26,6 +26,14 @@ of seconds.
 	or use the uWSGI and nginx configuration files provided in the repo
 
 
+### Statsd:
+
+If you wish to use StatsD then please set the following environment variables:
+
+* `IMG_RESIZER_STATSD_HOST`
+* `IMG_RESIZER_STATSD_PORT`
+
+
 ### Usage:
 
 It's quite simple really.

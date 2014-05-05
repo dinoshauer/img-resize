@@ -3,9 +3,10 @@ import uuid
 import io
 from urlparse import urlparse
 
+import magic
 import redis
 import requests
-import magic
+import statsd
 
 import resize
 
@@ -17,12 +18,17 @@ class ImageRetriever:
         return self.r.get(key)
 
 class Resizer:
-    def __init__(self, redis_config, image_dir, key_expire=None):
+    def __init__(self, redis_config, image_dir, statsd_config=None, key_expire=None):
         self.redis_config = redis_config
         self.r = redis.Redis(**redis_config)
         self.get = requests.get
         self.key_expire = key_expire
         self.image_dir = image_dir
+        self.stats_client = statsd.StatsClient(
+            statsd_config['host'],
+            statsd_config['port'],
+        )
+        self.statsd_config = statsd_config
 
     @staticmethod
     def _get(kwargs, key, fallback):
@@ -59,29 +65,35 @@ class Resizer:
             h=self._get(kwargs, 'height', 'h')
         )
         image = ImageRetriever(self.redis_config)
-        file_exists = image.get_file(file_name)
-        if file_exists:
-            return file_exists
-        result = self.process(kwargs, file_name=file_name)
-        if result:
-            return image.get_file(result['file_name'])
-        return False
+        with self.stats_client.timer(self.statsd_config['get_file_timer']):
+            file_exists = image.get_file(file_name)
+            if file_exists:
+                self.stats_client.incr(self.statsd_config['cached_counter'])
+                return file_exists
+            result = self.process(kwargs, file_name=file_name)
+            if result:
+                return image.get_file(result['file_name'])
+            return False
 
     def process(self, kwargs, file_name=None):
-        src = self.download_image(self._build_url(kwargs))
+        src = None
+        with self.stats_client.timer(self.statsd_config['save_file_timer']):
+            src = self.download_image(self._build_url(kwargs))
         if src:
             w = int(self._get(kwargs, 'width', 'w'))
             h = int(self._get(kwargs, 'height', 'h'))
-            thumb = self.resize_image(src, w, h, file_name)
-            base_name = os.path.basename(thumb)
-            if self.to_redis(base_name, thumb):
-                return {'file_name': base_name}
+            with self.stats_client.timer(self.statsd_config['resize_timer']):
+                thumb = self.resize_image(src, w, h, file_name)
+                base_name = os.path.basename(thumb)
+                if self.to_redis(base_name, thumb):
+                    return {'file_name': base_name}
         return False
 
     def to_redis(self, name, thumb):
-        if self.r.setex(name, self.read_to_bytes(thumb), self.key_expire):
-            return self.remove_file(thumb)
-        return False
+        with self.stats_client.timer(self.statsd_config['save_file_timer']):
+            if self.r.setex(name, self.read_to_bytes(thumb), self.key_expire):
+                return self.remove_file(thumb)
+            return False
 
     def download_image(self, src):
         request = self.get(src)

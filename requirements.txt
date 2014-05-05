@@ -9,5 +9,6 @@ itsdangerous==0.24
 paramiko==1.12.3
 pycrypto==2.6.1
 python-magic==0.4.6
+python-statsd==1.6.3
 redis==2.9.1
 requests==2.2.1

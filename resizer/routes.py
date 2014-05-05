@@ -16,7 +16,8 @@ def pass_through():
         r = Resizer(
             current_app.config['REDIS'],
             current_app.config['IMAGE_DIR'],
-            current_app.config['REDIS_KEY_EXPIRE']
+            statsd_config=current_app.config['STATSD'],
+            key_expire=current_app.config['REDIS_KEY_EXPIRE']
         )
         result = r.process_and_return(request.args)
         if result:
