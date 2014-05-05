@@ -46,16 +46,17 @@ class Resizer:
         return False
 
     def _build_url(self, kwargs):
-        url = kwargs['src']
+        url = self._get(kwargs, 'file', 'src')
         for k, v in kwargs.items():
-            if k not in ['src', 'w', 'h']:
+            if k not in ['src', 'w', 'h', 'file', 'width', 'height']:
                 url += '&{k}={v}'.format(k=k, v=v)
         return url
 
     def process_and_return(self, kwargs):
         file_name = '{file_name}_{w[0]}_{h[0]}'.format(
             file_name=self._parse_url(self._get(kwargs, 'file', 'src')),
-            **kwargs
+            w=self._get(kwargs, 'width', 'w'),
+            h=self._get(kwargs, 'height', 'h')
         )
         image = ImageRetriever(self.redis_config)
         file_exists = image.get_file(file_name)
@@ -67,11 +68,10 @@ class Resizer:
         return False
 
     def process(self, kwargs, file_name=None):
-        print kwargs
         src = self.download_image(self._build_url(kwargs))
         if src:
-            w = int(kwargs['w'])
-            h = int(kwargs['h'])
+            w = int(self._get(kwargs, 'width', 'w'))
+            h = int(self._get(kwargs, 'height', 'h'))
             thumb = self.resize_image(src, w, h, file_name)
             base_name = os.path.basename(thumb)
             if self.to_redis(base_name, thumb):
