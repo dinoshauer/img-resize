@@ -24,6 +24,13 @@ class Resizer:
         self.key_expire = key_expire
         self.image_dir = image_dir
 
+    @staticmethod
+    def _get(kwargs, key, fallback):
+        try:
+            return kwargs[key]
+        except KeyError:
+            return kwargs[fallback]
+
     def _parse_url(self, url):
         file_name, file_ext = os.path.splitext(
             os.path.basename(
@@ -47,7 +54,7 @@ class Resizer:
 
     def process_and_return(self, kwargs):
         file_name = '{file_name}_{w[0]}_{h[0]}'.format(
-            file_name=self._parse_url(kwargs['src']),
+            file_name=self._parse_url(self._get(kwargs, 'file', 'src')),
             **kwargs
         )
         image = ImageRetriever(self.redis_config)
