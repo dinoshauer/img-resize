@@ -11,7 +11,7 @@ server {
     access_log /var/log/nginx/tools.falconsocial.com-access.log;
     error_log /var/log/nginx/tools.falconsocial.com-error.log;
 
-    location / {
+    location /img-resizer/ {
         proxy_pass http://upstream_img_resizers;
     }
 }
