@@ -1,3 +1,5 @@
+import os
+
 class Config:
     DEBUG = False
     TESTING = False
@@ -8,8 +10,9 @@ class Config:
         'password': None
     }
     REDIS_KEY_EXPIRE = 604800  # a week in seconds
-    IMAGE_DIR = '/home/ubuntu/img-resizer/resources'
-    LOG_FILE = '/home/ubuntu/logs/img-resizer.log'
+    BASE_DIR = os.path.expanduser('~')
+    IMAGE_DIR = '{}/img-resizer/resources'.format(BASE_DIR)
+    LOG_FILE = '{}/logs/img-resizer.log'.format(BASE_DIR)
     STATSD = {
         'host': None,
         'port': 8125,
