@@ -13,13 +13,18 @@ def _load_statsd_config(app):
             app.config['STATSD']['host'] = config['statsd_host']
             app.config['STATSD']['port'] = config['statsd_port']
 
-def load_config(app, debug):
-    if debug:
+def load_config(app, args):
+    if args.mode:
         app.config.from_object('config.config.DevelopmentConfig')
         app.config['STATSD']['host'] = 'localhost'
     else:
         app.config.from_object('config.config.Config')
         _load_statsd_config(app)
+
+    if args.img_dir:
+        app.config['IMG_DIR'] = args.img_dir
+    if args.log_file:
+        app.config['LOG_FILE'] = args.log_file
 
 def rotating_handler(filename):
     if filename.startswith('~'):
