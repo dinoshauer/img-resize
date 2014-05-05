@@ -8,7 +8,7 @@ of seconds.
 ### Requirements (outside `requirements.txt`):
 
 * redis
-* libjpeg-dev (for PIL/Pillow)
+* `libjpeg-dev` and `zlib1g-dev` (for PIL/Pillow)
 
 
 ###  Optional requirements (You may switch these out with whatever you want):

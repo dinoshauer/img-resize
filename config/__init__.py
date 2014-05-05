@@ -1,15 +1,25 @@
 import os
+import json
 from logging import Formatter
 from logging.handlers import RotatingFileHandler
 import logging
 
+def _load_statsd_config(app):
+    home = os.path.expanduser('~')
+    statsd_config_file = '{}/.img-resizer'.format(home)
+    if os.path.isfile(statsd_config_file):
+        with open(statsd_config_file) as statsd_conf:
+            config = json.loads(statsd_conf.read())
+            app.config['STATSD']['host'] = config['statsd_host']
+            app.config['STATSD']['port'] = config['statsd_port']
+
 def load_config(app, debug):
     if debug:
         app.config.from_object('config.config.DevelopmentConfig')
+        app.config['STATSD']['host'] = 'localhost'
     else:
         app.config.from_object('config.config.Config')
-        app.config['STATSD']['host'] = os.environ.get('IMG_RESIZER_STATSD_HOST')
-        app.config['STATSD']['port'] = os.environ.get('IMG_RESIZER_STATSD_PORT')
+        _load_statsd_config(app)
 
 def rotating_handler(filename):
     if filename.startswith('~'):

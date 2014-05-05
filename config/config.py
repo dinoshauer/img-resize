@@ -8,8 +8,8 @@ class Config:
         'password': None
     }
     REDIS_KEY_EXPIRE = 604800  # a week in seconds
-    IMAGE_DIR = './resources'
-    LOG_FILE = 'app.log'
+    IMAGE_DIR = '/home/ubuntu/img-resizer/resources'
+    LOG_FILE = '/home/ubuntu/logs/img-resizer.log'
     STATSD = {
         'host': None,
         'port': 8125,
