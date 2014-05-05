@@ -59,21 +59,23 @@ class Resizer:
         return url
 
     def process_and_return(self, kwargs):
-        file_name = '{file_name}_{w}_{h}'.format(
-            file_name=self._parse_url(self._get(kwargs, 'file', 'src')),
-            w=self._get(kwargs, 'width', 'w'),
-            h=self._get(kwargs, 'height', 'h')
-        )
-        image = ImageRetriever(self.redis_config)
-        with self.stats_client.timer(self.statsd_config['get_file_timer']):
-            file_exists = image.get_file(file_name)
-            if file_exists:
-                self.stats_client.incr(self.statsd_config['cached_counter'])
-                return file_exists
-            result = self.process(kwargs, file_name=file_name)
-            if result:
-                return image.get_file(result['file_name'])
-            return False
+        with self.stats_client.timer(self.statsd_config['process_request_timer']):
+            file_name = '{file_name}_{w}_{h}'.format(
+                file_name=self._parse_url(self._get(kwargs, 'file', 'src')),
+                w=self._get(kwargs, 'width', 'w'),
+                h=self._get(kwargs, 'height', 'h')
+            )
+            image = ImageRetriever(self.redis_config)
+            with self.stats_client.timer(self.statsd_config['get_file_timer']):
+                file_exists = image.get_file(file_name)
+                if file_exists:
+                    self.stats_client.incr(self.statsd_config['cached_counter'])
+                    print 'cached_counter hit'
+                    return file_exists
+                result = self.process(kwargs, file_name=file_name)
+                if result:
+                    return image.get_file(result['file_name'])
+                return False
 
     def process(self, kwargs, file_name=None):
         src = None

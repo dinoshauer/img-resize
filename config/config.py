@@ -13,11 +13,12 @@ class Config:
     STATSD = {
         'host': None,
         'port': 8125,
-        'download_timer': 'img-resizer.download.timer',
-        'resize_timer': 'img-resizer.resize.timer',
-        'get_file_timer': 'img-resizer.get_file.timer',
-        'cached_counter': 'img-resizer.cached_file.counter',
-        'save_file_timer': 'img-resizer.save_file.timer'
+        'download_timer': 'img_resizer.download.timer',
+        'resize_timer': 'img_resizer.resize.timer',
+        'get_file_timer': 'img_resizer.get_file.timer',
+        'cached_counter': 'img_resizer.cached_file.counter',
+        'save_file_timer': 'img_resizer.save_file.timer',
+        'process_request_timer': 'img_resizer.process_request_total.timer'
     }
 
 class DevelopmentConfig(Config):

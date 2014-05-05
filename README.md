@@ -28,10 +28,13 @@ of seconds.
 
 ### Statsd:
 
-If you wish to use StatsD then please set the following environment variables:
+If you wish to use StatsD, you need a file called `.img-resizer` in your
+home directory looking like this:
 
-* `IMG_RESIZER_STATSD_HOST`
-* `IMG_RESIZER_STATSD_PORT`
+	{
+		"statsd_host": "localhost",
+		"statsd_port": 8425
+	}
 
 
 ### Usage:

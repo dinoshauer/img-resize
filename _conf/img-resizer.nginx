@@ -1,6 +1,17 @@
-location /img-resizer/ {
-    rewrite /img-resizer/(.+) /$1 break;
-    include uwsgi_params;
-    uwsgi_pass 127.0.0.1:3075;
-    uwsgi_read_timeout 120;
+upstream upstream_img_resizers {
+	server 127.0.0.1:8000;
+	server 127.0.0.1:8001;
+	server 127.0.0.1:8002;
+	server 127.0.0.1:8003;
+}
+server {
+    server_name tools.falconsocial.com;
+    listen 443 ssl;
+
+    access_log /var/log/nginx/tools.falconsocial.com-access.log;
+    error_log /var/log/nginx/tools.falconsocial.com-error.log;
+
+    location / {
+        proxy_pass http://upstream_img_resizers;
+    }
 }
