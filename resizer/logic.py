@@ -58,6 +58,13 @@ class Resizer:
                 url += '&{k}={v}'.format(k=k, v=v)
         return url
 
+    @staticmethod
+    def _check_for_protocol(url):
+        protocol = 'http'
+        if url.startswith(protocol, 0, len(protocol)):
+            return url
+        return 'http://{}'.format(url)
+
     def process_and_return(self, kwargs):
         with self.stats_client.timer(self.statsd_config['process_request_timer']):
             file_name = '{file_name}_{w}_{h}'.format(
@@ -97,7 +104,7 @@ class Resizer:
             return False
 
     def download_image(self, src):
-        request = self.get(src)
+        request = self.get(self._check_for_protocol(src))
         if request.ok:
             c = request.content
             if self._check_file_type(c):
