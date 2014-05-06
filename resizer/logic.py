@@ -79,7 +79,7 @@ class Resizer:
 
     def process(self, kwargs, file_name=None):
         src = None
-        with self.stats_client.timer(self.statsd_config['save_file_timer']):
+        with self.stats_client.timer(self.statsd_config['download_timer']):
             src = self.download_image(self._build_url(kwargs))
         if src:
             w = int(self._get(kwargs, 'width', 'w'))
