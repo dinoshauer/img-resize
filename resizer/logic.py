@@ -70,7 +70,6 @@ class Resizer:
                 file_exists = image.get_file(file_name)
                 if file_exists:
                     self.stats_client.incr(self.statsd_config['cached_counter'])
-                    print 'cached_counter hit'
                     return file_exists
                 result = self.process(kwargs, file_name=file_name)
                 if result:
