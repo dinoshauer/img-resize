@@ -32,7 +32,7 @@ def _update_server_status_in_nginx(i, down=True):
 def restart_supervisor_processes():
     for i in xrange(4):
         _update_server_status_in_nginx(i)
-        sudo('supervisorctl restart img-resizer:img-resizer-{}'.format(i))
+        sudo('supervisorctl restart img-resizer:{}'.format(i))
         _update_server_status_in_nginx(i, down=False)
 
 def restart_uwsgi():
