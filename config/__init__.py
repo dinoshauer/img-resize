@@ -13,18 +13,23 @@ def _load_statsd_config(app):
             app.config['STATSD']['host'] = config['statsd_host']
             app.config['STATSD']['port'] = config['statsd_port']
 
-def load_config(app, args):
-    if args.mode:
+def load_config(app):
+    testing = os.environ.get('IMG_RESIZER_TESTING')
+    deving = os.environ.get('IMG_RESIZER_DEV')
+    BASE_DIR = os.getcwd()
+    if testing:
+        app.config.from_object('config.config.TestingConfig')
+        app.config['STATSD']['host'] = 'localhost'
+        app.config['IMG_DIR'] = '{}/resources'.format(BASE_DIR)
+        app.config['LOG_FILE'] = '{}/img-resizer.log'.format(BASE_DIR)
+    elif deving:
         app.config.from_object('config.config.DevelopmentConfig')
         app.config['STATSD']['host'] = 'localhost'
+        app.config['IMG_DIR'] = '{}/resources'.format(BASE_DIR)
+        app.config['LOG_FILE'] = '{}/img-resizer.log'.format(BASE_DIR)
     else:
         app.config.from_object('config.config.Config')
         _load_statsd_config(app)
-
-    if args.img_dir:
-        app.config['IMG_DIR'] = args.img_dir
-    if args.log_file:
-        app.config['LOG_FILE'] = args.log_file
 
 def rotating_handler(filename):
     if filename.startswith('~'):
