@@ -35,9 +35,6 @@ def restart_supervisor_processes():
         sudo('supervisorctl restart img-resizer:{}'.format(i))
         _update_server_status_in_nginx(i, down=False)
 
-def restart_uwsgi():
-    sudo('touch /etc/uwsgi/apps-enabled/img-resizer.uwsgi.ini')
-
 def build_and_deploy():
     deploy_api()
     build_virtual_env()
