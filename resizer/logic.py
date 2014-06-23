@@ -60,8 +60,7 @@ class Resizer:
 
     @staticmethod
     def _check_for_protocol(url):
-        protocol = 'http'
-        if url.startswith(protocol, 0, len(protocol)):
+        if url.startswith('http://') or url.startswith('https://'):
             return url
         return 'http://{}'.format(url)
 
