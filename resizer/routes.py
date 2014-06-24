@@ -25,6 +25,6 @@ def pass_through():
                 result,
                 mimetype='image/jpeg'
             )
-        return responses.not_found()
+        return responses.not_found()  # pragma: no cover
     except KeyError, e:
         return responses.bad_argument(e.message)
