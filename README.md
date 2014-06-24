@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/Dinoshauer/img-resize.svg?branch=master)](https://travis-ci.org/Dinoshauer/img-resize)
+[![Coverage Status](https://coveralls.io/repos/Dinoshauer/img-resize/badge.png)](https://coveralls.io/r/Dinoshauer/img-resize)
+
 Flask Image Resizer
 ===================
 
