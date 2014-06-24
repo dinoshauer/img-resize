@@ -9,22 +9,6 @@ def bad_argument(arg):
         }
     ), 400
 
-def success(data):
-    return jsonify(
-        {
-            'status': 'ok',
-            'data': data
-        }
-    ), 200
-
-def created(data):
-    return jsonify(
-        {
-            'status': 'created',
-            'data': data
-        }
-    ), 201
-
 def not_found():
     return jsonify(
         {
