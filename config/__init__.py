@@ -4,11 +4,12 @@ from logging import Formatter
 from logging.handlers import RotatingFileHandler
 import logging
 
-def _load_statsd_config(app):
-    home = os.path.expanduser('~')
-    statsd_config_file = '{}/.img-resizer'.format(home)
-    if os.path.isfile(statsd_config_file):
-        with open(statsd_config_file) as statsd_conf:
+def _load_statsd_config(app, path=None):
+    if not path:
+        home = os.path.expanduser('~')
+        path = '{}/.img-resizer'.format(home)
+    if os.path.isfile(path):
+        with open(path) as statsd_conf:
             config = json.loads(statsd_conf.read())
             app.config['STATSD']['host'] = config['statsd_host']
             app.config['STATSD']['port'] = config['statsd_port']
@@ -22,12 +23,12 @@ def load_config(app):
         app.config['STATSD']['host'] = 'localhost'
         app.config['IMG_DIR'] = '{}/resources'.format(BASE_DIR)
         app.config['LOG_FILE'] = '{}/img-resizer.log'.format(BASE_DIR)
-    elif deving:
+    elif deving:  # pragma: no cover
         app.config.from_object('config.config.DevelopmentConfig')
         app.config['STATSD']['host'] = 'localhost'
         app.config['IMG_DIR'] = '{}/resources'.format(BASE_DIR)
         app.config['LOG_FILE'] = '{}/img-resizer.log'.format(BASE_DIR)
-    else:
+    else:  # pragma: no cover
         app.config.from_object('config.config.Config')
         _load_statsd_config(app)
 
