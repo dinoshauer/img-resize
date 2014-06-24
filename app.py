@@ -14,4 +14,4 @@ app.register_blueprint(resizer)
 app.register_blueprint(utils)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0') # pragma: no cover
