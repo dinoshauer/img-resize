@@ -1,5 +1,4 @@
 import os
-import uuid
 import io
 from urlparse import urlparse
 
@@ -49,7 +48,6 @@ class Resizer:
         if blob:
             result = magic.from_buffer(blob)
             return 'bitmap' in result or 'image' in result
-        return False
 
     def _build_url(self, kwargs):
         url = self._get(kwargs, 'file', 'src')
@@ -80,7 +78,6 @@ class Resizer:
                 result = self.process(kwargs, file_name=file_name)
                 if result:
                     return image.get_file(result['file_name'])
-                return False
 
     def process(self, kwargs, file_name=None):
         src = None
@@ -94,13 +91,11 @@ class Resizer:
                 base_name = os.path.basename(thumb)
                 if self.to_redis(base_name, thumb):
                     return {'file_name': base_name}
-        return False
 
     def to_redis(self, name, thumb):
         with self.stats_client.timer(self.statsd_config['save_file_timer']):
             if self.r.setex(name, self.read_to_bytes(thumb), self.key_expire):
                 return self.remove_file(thumb)
-            return False
 
     def download_image(self, src):
         request = self.get(self._check_for_protocol(src))
@@ -108,13 +103,9 @@ class Resizer:
             c = request.content
             if self._check_file_type(c):
                 return io.BytesIO(c)
-        return False
 
-    def resize_image(self, src, w, h, file_name=None):
-        if file_name:
-            out = '{}/{}'.format(self.image_dir, file_name)
-        else:
-            out = '{}/{}.jpg'.format(self.image_dir, str(uuid.uuid4()))
+    def resize_image(self, src, w, h, file_name):
+        out = '{}/{}'.format(self.image_dir, file_name)
         if h is 0 or w is 0:
             result = resize.resize_with_specific_ratio(src, out, width=w, height=h)
         else:
