@@ -21,25 +21,29 @@ class ImageResizeTest(TestCase):
         self.app = app.test_client()
         self.test_image_name = 'test_image.jpg'
         self.base_url = '/v1/resizer/{}'
-        self.get_image_url = self.base_url.format(
-                    '?width={}&height={}&file={}'.format(
-                        0, 100, 'http://test.server.com/heman.png'
-                    )
-                )
         self.bad_argument_url = self.base_url.format('?file=http://test.server.com/heman.png')
 
     def tearDown(self):
-        self.r.delete('heman.png_0_100')
+        self.r.delete('heman.png*')
         try:
             os.remove(self.test_image_name)
         except OSError:
             pass
 
+    def build_image_url(self, width, height):
+        return self.base_url.format(
+                '?width={}&height={}&file={}'.format(
+                    width, height, 'http://test.server.com/heman.png'
+                )
+            )
+
+
 class TestResizeImage(ImageResizeTest):
     def make_request(self, width, height):
         with HTTMock(get_image_mock):
-            response = self.app.get(self.get_image_url)
-            image = self.r.get('heman.png_0_100')
+            response = self.app.get(self.build_image_url(width, height))
+            key_name = 'heman.png_{}_{}'.format(width, height)
+            image = self.r.get(key_name)
 
             with open(self.test_image_name, 'w') as f:
                 f.write(image)
@@ -48,33 +52,39 @@ class TestResizeImage(ImageResizeTest):
 
             assert response.status_code == 200
             assert 'image/jpeg' in response.content_type
-
-            assert 'heman.png_0_100' in self.r.keys('heman.png_0_100')
+            assert key_name in self.r.keys(key_name)
             assert image is not None
 
-            return width, height
+            return width, height, response
 
     def test_file_exists_already(self):
-        with HTTMock(get_image_mock):
-            response = self.app.get(self.get_image_url)
-            with HTTMock(get_image_mock):
-                response_2 = self.app.get(self.get_image_url)
-                assert response_2.status_code == 200
+        """ Tests that the response is 200 and that
+        the file exists already
+        """
+        self.make_request(0, 100)
+        self.make_request(0, 100)
 
     def test_height(self):
-        width, height = self.make_request(0, 100)
+        width, height, _ = self.make_request(0, 100)
         assert height is not None
         assert width is not None
 
     def test_width(self):
-        width, height = self.make_request(100, 0)
+        width, height, _ = self.make_request(100, 0)
         assert width is not None
         assert height is not None
+
+    def test_width_and_height(self):
+        width, height, _ = self.make_request(200, 200)
+        assert width is not None
+        assert height is not None
+
 
     def test_bad_argument(self):
         with HTTMock(get_image_mock):
             response = self.app.get(self.bad_argument_url)
             assert response.status_code == 400
+
 
 class TestUtils(TestCase):
     def setUp(self):
@@ -84,6 +94,7 @@ class TestUtils(TestCase):
         response = self.app.get('/v1/utils/ping')
         assert response.status_code == 200
         assert response.get_data() == 'pong'
+
 
 class TestConfig(TestCase):
     def setUp(self):
