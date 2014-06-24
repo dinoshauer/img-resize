@@ -1,3 +1,4 @@
+import os
 import json
 from unittest import TestCase
 
@@ -7,8 +8,7 @@ from httmock import urlmatch, HTTMock
 from redis import Redis
 
 from app import app
-
-import os
+import config
 
 @urlmatch(netloc=r'(.*\.)?test.server\.com$')
 def get_image_mock(url, request):
@@ -84,9 +84,6 @@ class TestUtils(TestCase):
         response = self.app.get('/v1/utils/ping')
         assert response.status_code == 200
         assert response.get_data() == 'pong'
-
-import config
-
 
 class TestConfig(TestCase):
     def setUp(self):
