@@ -15,30 +15,30 @@ def get_image_mock(url, request):
     return open('tests/test_resources/heman.png', 'r').read()
 
 
-class SuccessImageResizeTest(TestCase):
+class ImageResizeTest(TestCase):
     def setUp(self):
         self.r = Redis()
         self.app = app.test_client()
-        self.base_url = '/v1/resizer/{}'
         self.test_image_name = 'test_image.jpg'
+        self.base_url = '/v1/resizer/{}'
+        self.get_image_url = self.base_url.format(
+                    '?width={}&height={}&file={}'.format(
+                        0, 100, 'http://test.server.com/heman.png'
+                    )
+                )
+        self.bad_argument_url = self.base_url.format('?file=http://test.server.com/heman.png')
 
     def tearDown(self):
-        self.r.flushall()
+        self.r.delete('heman.png_0_100')
         try:
             os.remove(self.test_image_name)
         except OSError:
             pass
 
-class TestResizeImage(SuccessImageResizeTest):
+class TestResizeImage(ImageResizeTest):
     def make_request(self, width, height):
         with HTTMock(get_image_mock):
-            response = self.app.get(
-                self.base_url.format(
-                    '?width={}&height={}&file={}'.format(
-                        0, 100, 'http://test.server.com/heman.png'
-                    )
-                )
-            )
+            response = self.app.get(self.get_image_url)
             image = self.r.get('heman.png_0_100')
 
             with open(self.test_image_name, 'w') as f:
@@ -54,6 +54,13 @@ class TestResizeImage(SuccessImageResizeTest):
 
             return width, height
 
+    def test_file_exists_already(self):
+        with HTTMock(get_image_mock):
+            response = self.app.get(self.get_image_url)
+            with HTTMock(get_image_mock):
+                response_2 = self.app.get(self.get_image_url)
+                assert response_2.status_code == 200
+
     def test_height(self):
         width, height = self.make_request(0, 100)
         assert height is not None
@@ -66,7 +73,14 @@ class TestResizeImage(SuccessImageResizeTest):
 
     def test_bad_argument(self):
         with HTTMock(get_image_mock):
-            response = self.app.get(
-                self.base_url.format('?file=http://test.server.com/heman.png')
-            )
+            response = self.app.get(self.bad_argument_url)
             assert response.status_code == 400
+
+class TestUtils(TestCase):
+    def setUp(self):
+        self.app = app.test_client()
+
+    def test_ping(self):
+        response = self.app.get('/v1/utils/ping')
+        assert response.status_code == 200
+        assert response.get_data() == 'pong'
