@@ -25,7 +25,7 @@ def resize_with_specific_ratio(src, out, width=None, height=None, quality=70):
     image.convert('RGB').save(out, "JPEG", quality=quality)
     return True
 
-def main():
+def main():  # pragma: no cover
     import sys
     import argparse
 
@@ -43,4 +43,4 @@ def main():
     sys.exit(0)
 
 if __name__ == '__main__':
-    main()
+    main()  # pragma: no cover

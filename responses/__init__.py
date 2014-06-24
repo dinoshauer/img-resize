@@ -15,4 +15,4 @@ def not_found():
             'status': 'error',
             'error': 'not found'
         }
-    ), 404  # pragma: no cover
+    ), 404
