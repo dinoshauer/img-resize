@@ -84,3 +84,32 @@ class TestUtils(TestCase):
         response = self.app.get('/v1/utils/ping')
         assert response.status_code == 200
         assert response.get_data() == 'pong'
+
+import config
+
+
+class TestConfig(TestCase):
+    def setUp(self):
+        self.statsd_config = 'statsd_config'
+        self._create_statsd_config()
+
+    def tearDown(self):
+        try:
+            os.remove(self.statsd_config)
+        except OSError:
+            pass
+
+    def _create_statsd_config(self):
+        config = {
+            "statsd_host": "localhost",
+            "statsd_port": 8125
+        }
+        with open(self.statsd_config, 'w') as f:
+            f.write(json.dumps(config))
+
+    def test_statsd_config(self):
+        config._load_statsd_config(app, self.statsd_config)
+        statsd = app.config['STATSD']
+        assert isinstance(statsd, dict)
+        assert statsd['host'] == 'localhost'
+        assert statsd['port'] == 8125
