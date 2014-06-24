@@ -40,9 +40,19 @@ def rotating_handler(filename):
     handler.setFormatter(formatter)
     return handler
 
+def stdout_handler():
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s'))
+    return handler
+
 def setup_logging(app):
     if not app.debug:
         filename = app.config['LOG_FILE']
-        handler = rotating_handler(filename)
+        try:
+            handler = rotating_handler(filename)
+        except IOError, e:
+            handler = stdout_handler()
+            print 'Falling back to stdout handler due to IOError'
+            print e
         handler.setLevel(logging.INFO)
         app.logger.addHandler(handler)
