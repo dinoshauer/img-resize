@@ -10,6 +10,7 @@ from redis import Redis
 from app import app
 import config
 
+
 @urlmatch(netloc=r'(.*\.)?test.server\.com$')
 def get_image_mock(url, request):
     return open('tests/test_resources/heman.png', 'r').read()
@@ -21,7 +22,9 @@ class ImageResizeTest(TestCase):
         self.app = app.test_client()
         self.test_image_name = 'test_image.jpg'
         self.base_url = '/v1/resizer/{}'
-        self.bad_argument_url = self.base_url.format('?file=http://test.server.com/heman.png')
+        self.bad_argument_url = self.base_url.format(
+            '?file=http://test.server.com/heman.png'
+        )
 
     def tearDown(self):
         self.r.delete('heman.png*')

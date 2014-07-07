@@ -1,6 +1,8 @@
 language: python
 python:
     - "2.7"
+before_script:
+    - "ls -lha"
 # command to install dependencies
 services:
     - redis-server
