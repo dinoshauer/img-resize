@@ -8,7 +8,8 @@ install:
     - "pip install -r requirements.txt"
 before_script:
     - "mkdir -p img-resizer/resources"
-    - "ls -lha"
+    - "ls -lha /home/travis/"
+    - "ls -lha /home/travis/img-resizer/resources/"
 # command to run tests
 script: "nosetests --cov-config .coveragerc  --with-coverage"
 after_success: coveralls
