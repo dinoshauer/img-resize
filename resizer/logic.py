@@ -42,7 +42,7 @@ class Resizer:
                 urlparse(url).path
             )
         )
-        return '{}{}'.format(file_name, file_ext)
+        return u'{}{}'.format(file_name, file_ext)
 
     def _check_file_type(self, blob):
         if blob:
@@ -53,18 +53,18 @@ class Resizer:
         url = self._get(kwargs, 'file', 'src')
         for k, v in kwargs.items():
             if k not in ['src', 'w', 'h', 'file', 'width', 'height']:
-                url += '&{k}={v}'.format(k=k, v=v)
+                url += u'&{k}={v}'.format(k=k, v=v)
         return url
 
     @staticmethod
     def _check_for_protocol(url):
         if url.startswith('http://') or url.startswith('https://'):
             return url
-        return 'http://{}'.format(url)
+        return u'http://{}'.format(url)
 
     def process_and_return(self, kwargs):
         with self.stats_client.timer(self.statsd_config['process_request_timer']):
-            file_name = '{file_name}_{w}_{h}'.format(
+            file_name = u'{file_name}_{w}_{h}'.format(
                 file_name=self._parse_url(self._get(kwargs, 'file', 'src')),
                 w=self._get(kwargs, 'width', 'w'),
                 h=self._get(kwargs, 'height', 'h')
@@ -105,7 +105,7 @@ class Resizer:
                 return io.BytesIO(c)
 
     def resize_image(self, src, w, h, file_name):
-        out = '{}/{}'.format(self.image_dir, file_name)
+        out = u'{}/{}'.format(self.image_dir, file_name)
         if h is 0 or w is 0:
             result = resize.resize_with_specific_ratio(src, out, width=w, height=h)
         else:
