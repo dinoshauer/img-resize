@@ -2,7 +2,7 @@ import glob
 from fabric.api import cd, local, run, put, sudo, prefix
 from fabric.contrib.project import rsync_project
 
-WEB_ROOT = '/home/ubuntu/img-resizer/'
+WEB_ROOT = '/home/ubuntu/img-resize/'
 NGINX_CONF_DIR = '/etc/nginx/sites-enabled/'
 
 def deploy_api():
