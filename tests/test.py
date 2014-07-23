@@ -21,7 +21,7 @@ class ImageResizeTest(TestCase):
         self.r = Redis()
         self.app = app.test_client()
         self.test_image_name = 'test_image.jpg'
-        self.base_url = '/v1/resizer/{}'
+        self.base_url = '/img-resizer/v1/resizer/{}'
         self.bad_argument_url = self.base_url.format(
             '?file=http://test.server.com/heman.png'
         )
