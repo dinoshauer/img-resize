@@ -7,7 +7,7 @@ import responses
 resizer = Blueprint(
     'resizer',
     __name__,
-    url_prefix='/v1/resizer'
+    url_prefix='/img-resizer/v1/resizer'
 )
 
 @resizer.route('/', methods=['GET'])

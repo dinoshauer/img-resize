@@ -1,8 +1,8 @@
 upstream upstream_img_resizers {
-    server 127.0.0.1:5000;
-    server 127.0.0.1:8001 down;
-    server 127.0.0.1:8002 down;
-    server 127.0.0.1:8003 down;
+    server unix:/var/run/uwsgi/img-resizer00.sock;
+    server unix:/var/run/uwsgi/img-resizer01.sock;
+    server unix:/var/run/uwsgi/img-resizer02.sock;
+    server unix:/var/run/uwsgi/img-resizer03.sock;
 }
 server {
     server_name tools.falconsocial.com;
@@ -12,6 +12,7 @@ server {
     error_log /var/log/nginx/tools.falconsocial.com-error.log;
 
     location /img-resizer/ {
-        proxy_pass http://upstream_img_resizers/;
+        include uwsgi_params;
+        uwsgi_pass upstream_img_resizers;
     }
 }

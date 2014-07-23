@@ -2,7 +2,7 @@ import glob
 from fabric.api import cd, local, run, put, sudo, prefix
 from fabric.contrib.project import rsync_project
 
-WEB_ROOT = '/home/ubuntu/img-resizer/'
+WEB_ROOT = '/home/ubuntu/img-resize/'
 NGINX_CONF_DIR = '/etc/nginx/sites-enabled/'
 
 def deploy_api():
@@ -29,6 +29,9 @@ def _update_server_status_in_nginx(i, down=True):
         sudo('sed --follow-symlinks --in-place "s/$1:800{0} down;/$1:800{0};/" {1}*'.format(i, NGINX_CONF_DIR))
     _reload_nginx_config()
 
+def update_supervisor_config():
+    sudo('supervisorctl reread')
+
 def restart_supervisor_processes():
     for i in xrange(4):
         _update_server_status_in_nginx(i)
@@ -39,4 +42,5 @@ def build_and_deploy():
     deploy_api()
     build_virtual_env()
     re_link_nginx_config()
+    update_supervisor_config()
     restart_supervisor_processes()

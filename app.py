@@ -1,5 +1,3 @@
-import argparse
-
 from flask import Flask
 
 import config
