@@ -1,8 +1,8 @@
 upstream upstream_img_resizers {
-    server unix:/var/run/uwsgi/nest-api00.sock;
-    server unix:/var/run/uwsgi/nest-api01.sock;
-    server unix:/var/run/uwsgi/nest-api02.sock;
-    server unix:/var/run/uwsgi/nest-api03.sock;
+    server unix:/var/run/uwsgi/img-resizer00.sock;
+    server unix:/var/run/uwsgi/img-resizer01.sock;
+    server unix:/var/run/uwsgi/img-resizer02.sock;
+    server unix:/var/run/uwsgi/img-resizer03.sock;
 }
 server {
     server_name tools.falconsocial.com;
