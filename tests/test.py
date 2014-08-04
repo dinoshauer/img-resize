@@ -45,7 +45,7 @@ class TestResizeImage(ImageResizeTest):
     def make_request(self, width, height):
         with HTTMock(get_image_mock):
             response = self.app.get(self.build_image_url(width, height))
-            key_name = 'heman.png_{}_{}'.format(width, height)
+            key_name = 'http://test.server.com/heman.png_{}_{}'.format(width, height)
             image = self.r.get(key_name)
 
             with open(self.test_image_name, 'w') as f:
