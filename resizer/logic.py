@@ -1,6 +1,6 @@
 import os
 import io
-from urlparse import urlparse
+from urlparse import urlparse, urlunparse
 
 import magic
 import redis
@@ -58,9 +58,12 @@ class Resizer:
 
     @staticmethod
     def _check_for_protocol(url):
-        if url.startswith('http://') or url.startswith('https://'):
-            return url
-        return u'http://{}'.format(url)
+        parsed_url = urlparse(url)
+        if parsed_url.scheme not in ['http', 'https']:
+            parsed_url = list(parsed_url)
+            parsed_url[0] = 'http'
+            return urlunparse(parsed_url)
+        return url
 
     def process_and_return(self, kwargs):
         with self.stats_client.timer(self.statsd_config['process_request_timer']):
