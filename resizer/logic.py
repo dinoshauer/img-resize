@@ -69,17 +69,22 @@ class Resizer:
                 w=self._get(kwargs, 'width', 'w'),
                 h=self._get(kwargs, 'height', 'h')
             )
+            key_name = u'{path}_{w}_{h}'.format(
+                path=self._get(kwargs, 'file', 'src'),
+                w=self._get(kwargs, 'width', 'w'),
+                h=self._get(kwargs, 'height', 'h')
+            )
             image = ImageRetriever(self.redis_config)
             with self.stats_client.timer(self.statsd_config['get_file_timer']):
-                file_exists = image.get_file(file_name)
+                file_exists = image.get_file(key_name)
                 if file_exists:
                     self.stats_client.incr(self.statsd_config['cached_counter'])
                     return file_exists
-                result = self.process(kwargs, file_name=file_name)
+                result = self.process(kwargs, key_name, file_name=file_name)
                 if result:
                     return image.get_file(result['file_name'])
 
-    def process(self, kwargs, file_name=None):
+    def process(self, kwargs, key_name, file_name=None):
         src = None
         with self.stats_client.timer(self.statsd_config['download_timer']):
             src = self.download_image(self._build_url(kwargs))
@@ -88,9 +93,8 @@ class Resizer:
             h = int(self._get(kwargs, 'height', 'h'))
             with self.stats_client.timer(self.statsd_config['resize_timer']):
                 thumb = self.resize_image(src, w, h, file_name)
-                base_name = os.path.basename(thumb)
-                if self.to_redis(base_name, thumb):
-                    return {'file_name': base_name}
+                if self.to_redis(key_name, thumb):
+                    return {'file_name': key_name}
 
     def to_redis(self, name, thumb):
         with self.stats_client.timer(self.statsd_config['save_file_timer']):
