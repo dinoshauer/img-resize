@@ -70,7 +70,7 @@ class Resizer:
                 h=self._get(kwargs, 'height', 'h')
             )
             key_name = u'{path}_{w}_{h}'.format(
-                path=self._get(kwargs, 'file', 'src'),
+                path=self._build_url(kwargs),
                 w=self._get(kwargs, 'width', 'w'),
                 h=self._get(kwargs, 'height', 'h')
             )
