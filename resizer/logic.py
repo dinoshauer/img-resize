@@ -105,8 +105,6 @@ class Resizer:
         request = self.get(self._check_for_protocol(src))
         if request.ok:
             c = request.content
-            with open('test.jpg', 'wb') as f:
-                f.write(c)
             if self._check_file_type(c):
                 return io.BytesIO(c)
 
