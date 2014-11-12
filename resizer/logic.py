@@ -52,7 +52,7 @@ class Resizer:
     def _build_url(self, kwargs):
         url = self._get(kwargs, 'file', 'src')
         for k, v in kwargs.items():
-            if k not in ['src', 'file', 'width', 'height']:
+            if k not in ['src', 'file', 'w', 'h', 'width', 'height']:
                 url += u'&{k}={v}'.format(k=k, v=v)
         return url
 
