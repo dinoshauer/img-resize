@@ -21,10 +21,7 @@ def pass_through():
         )
         result = r.process_and_return(request.args)
         if result:
-            return Response(
-                result,
-                mimetype='image/jpeg'
-            )
+            return Response(result, mimetype='image/jpeg')
         return responses.not_found()
     except KeyError, e:
         return responses.bad_argument(e.message)
