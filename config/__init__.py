@@ -23,15 +23,22 @@ def load_config(app):
         app.config.from_object('config.config.TestingConfig')
         app.config['STATSD']['host'] = 'localhost'
         app.config['IMG_DIR'] = '{}/resources'.format(BASE_DIR)
-        app.config['LOG_FILE'] = '{}/img-resizer.log'.format(BASE_DIR)
+        app.config['LOG_DIR'] = BASE_DIR
     elif deving:  # pragma: no cover
         app.config.from_object('config.config.DevelopmentConfig')
         app.config['STATSD']['host'] = 'localhost'
         app.config['IMG_DIR'] = '{}/resources'.format(BASE_DIR)
-        app.config['LOG_FILE'] = '{}/img-resizer.log'.format(BASE_DIR)
+        app.config['LOG_DIR'] = BASE_DIR
     else:  # pragma: no cover
         app.config.from_object('config.config.Config')
         _load_statsd_config(app)
+
+    if not os.path.isdir(app.config['BASE_DIR']):
+        os.makedirs(app.config['BASE_DIR'])
+    if not os.path.isdir(app.config['IMAGE_DIR']):
+        os.makedirs(app.config['IMAGE_DIR'])
+    if not os.path.isdir(app.config['LOG_DIR']):
+        os.makedirs(app.config['LOG_DIR'])
 
 def rotating_handler(filename):
     if filename.startswith('~'):
@@ -48,7 +55,7 @@ def stdout_handler():
 
 def setup_logging(app):
     if not app.debug:
-        filename = app.config['LOG_FILE']
+        filename = os.path.join(app.config['LOG_DIR'], 'img-resizer.log')
         try:
             handler = rotating_handler(filename)
         except IOError, e:

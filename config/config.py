@@ -10,9 +10,9 @@ class Config:
         'password': None
     }
     REDIS_KEY_EXPIRE = 604800  # a week in seconds
-    BASE_DIR = os.path.expanduser('~')
-    IMAGE_DIR = '{}/img-resizer/resources'.format(BASE_DIR)
-    LOG_FILE = '{}/logs/img-resizer.log'.format(BASE_DIR)
+    BASE_DIR = os.environ.get('IMG_RESIZER_BASE_DIR', os.path.expanduser('~'))
+    IMAGE_DIR = '{}/resources'.format(BASE_DIR)
+    LOG_DIR = os.environ.get('IMG_RESIZER_LOG_DIR', '{}/logs/'.format(BASE_DIR))
     STATSD = {
         'host': None,
         'port': 8125,
