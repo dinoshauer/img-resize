@@ -1,5 +1,6 @@
-import os
 import io
+import os
+import time
 from urlparse import urlparse
 
 import magic
@@ -109,7 +110,7 @@ class Resizer:
                 return io.BytesIO(c)
 
     def resize_image(self, src, w, h, file_name):
-        out = u'{}/{}'.format(self.image_dir, file_name)
+        out = u'{}/{}_{}'.format(self.image_dir, file_name, time.time())
         if h is 0 or w is 0:
             result = resize.resize_with_specific_ratio(src, out, width=w, height=h)
         else:
